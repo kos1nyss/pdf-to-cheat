@@ -136,7 +136,3 @@ class Converter:
                     self.__make_sheet()
 
         self.document.save(out_filename)
-
-
-conv = Converter()
-conv.execute('cheat.docx', folder_with_pdfs_path='../questions')
