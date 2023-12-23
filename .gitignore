@@ -1,0 +1,5 @@
+venv/
+.idea/
+questions/
+sv.py
+titles.py
