@@ -1,5 +1,9 @@
 venv/
 .idea/
-questions/
+
+examples/many.docx
+examples/one.docx
+
 sv.py
 titles.py
+test.py

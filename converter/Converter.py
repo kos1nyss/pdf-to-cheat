@@ -1,9 +1,11 @@
-from os import listdir, remove
+from os import listdir, remove, getcwd
 from pdf2image import convert_from_path
 from docx import Document
 from docx.shared import Mm
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from PIL import Image, ImageDraw, ImageFont
+
+from os.path import dirname
 
 
 class Converter:
@@ -117,8 +119,14 @@ class Converter:
         self.__prepare_to_convert()
 
         for pdf_file_index, pdf_filename in enumerate(pdf_files):
-            images = convert_from_path(f'{folder_with_pdfs_path}/{pdf_filename}',
-                                       poppler_path=r'poppler/Library/bin')
+            poppler_path = dirname(__file__) + r'/poppler/Library/bin'
+
+            if folder_with_pdfs_path:
+                file_to_convert = f'{folder_with_pdfs_path}/{pdf_filename}'
+            elif pdf_path:
+                file_to_convert = pdf_filename
+
+            images = convert_from_path(file_to_convert, poppler_path=poppler_path)
 
             for image_index, image in enumerate(images):
                 image_filename = str(self.counter) + '.jpg'
