@@ -1,5 +1,6 @@
+import fitz
+
 from os import listdir, remove, getcwd
-from pdf2image import convert_from_path
 from docx import Document
 from docx.shared import Mm
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
@@ -119,18 +120,20 @@ class Converter:
         self.__prepare_to_convert()
 
         for pdf_file_index, pdf_filename in enumerate(pdf_files):
-            poppler_path = dirname(__file__) + r'/poppler/Library/bin'
-
             if folder_with_pdfs_path:
                 file_to_convert = f'{folder_with_pdfs_path}/{pdf_filename}'
             elif pdf_path:
                 file_to_convert = pdf_filename
 
-            images = convert_from_path(file_to_convert, poppler_path=poppler_path)
+            pdf_file = fitz.open(file_to_convert)
+            images = []
+            for num, page in enumerate(pdf_file.pages()):
+                images.append(page.get_pixmap())
+            pdf_file.close()
 
             for image_index, image in enumerate(images):
-                image_filename = str(self.counter) + '.jpg'
-                image.save(image_filename, 'JPEG')
+                image_filename = str(self.counter) + '.png'
+                image.save(image_filename, 'PNG')
                 self.counter += 1
 
                 self.__draw_extra_information(image_filename)
