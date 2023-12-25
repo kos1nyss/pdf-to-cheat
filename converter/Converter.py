@@ -10,9 +10,11 @@ from os.path import dirname
 
 
 class Converter:
-    def __init__(self):
-        self.document = None
+    def __init__(self, dpi: int = 200):
+        # :param dpi: dots per inch
 
+        self.dpi = dpi
+        self.document = None
         self.font = ImageFont.truetype('arial.ttf', 40)
 
     def __prepare_to_convert(self):
@@ -128,7 +130,7 @@ class Converter:
             pdf_file = fitz.open(file_to_convert)
             images = []
             for num, page in enumerate(pdf_file.pages()):
-                images.append(page.get_pixmap())
+                images.append(page.get_pixmap(dpi=self.dpi))
             pdf_file.close()
 
             for image_index, image in enumerate(images):
