@@ -35,7 +35,7 @@ class Converter:
         self.queue_images = []
         self.counter = 0
 
-    def __draw_extra_information(self, image_filename: str, filename=None):
+    def __draw_extra_information(self, image_filename: str, paragraph_title=None):
         black = (0, 0, 0, 255)
 
         image = Image.open(image_filename)
@@ -52,9 +52,9 @@ class Converter:
             page_text_pos = [1500, text_y]
         draw.text(page_text_pos, page, font=self.font, fill=black)
 
-        if filename:
+        if paragraph_title:
             filename_text_pos = [270, text_y]
-            draw.text(filename_text_pos, filename, font=self.font, fill=black)
+            draw.text(filename_text_pos, paragraph_title, font=self.font, fill=black)
 
         image.save(image_filename)
 
@@ -133,12 +133,19 @@ class Converter:
                 images.append(page.get_pixmap(dpi=self.dpi))
             pdf_file.close()
 
+            if len(pdf_files) > 1:
+                service_symbols = '0123456789.pdf'
+                paragraph_title = pdf_filename.strip(service_symbols)
+                paragraph_title = paragraph_title[:25]
+            else:
+                paragraph_title = None
+
             for image_index, image in enumerate(images):
                 image_filename = str(self.counter) + '.png'
                 image.save(image_filename, 'PNG')
                 self.counter += 1
 
-                self.__draw_extra_information(image_filename)
+                self.__draw_extra_information(image_filename, paragraph_title=paragraph_title)
                 self.queue_images.append(image_filename)
 
                 is_images_queue_full = len(self.queue_images) == 8
