@@ -10,11 +10,12 @@ from os.path import dirname
 
 
 class Converter:
-    def __init__(self, dpi: int = 200):
-        # :param dpi: dots per inch
+    def __init__(self, leave_number_in_paragraph_title: bool = False):
 
-        self.dpi = dpi
+        self.leave_number_in_paragraph_title = leave_number_in_paragraph_title
+
         self.document = None
+        self.dpi = 200  # dots per inch
         self.font = ImageFont.truetype('arial.ttf', 40)
 
     def __prepare_to_convert(self):
@@ -108,6 +109,12 @@ class Converter:
 
         return table
 
+    def __get_service_symbols(self):
+        if self.leave_number_in_paragraph_title:
+            return '.pdf'
+        else:
+            return '0123456789.pdf'
+
     def execute(self, out_filename: str, folder_with_pdfs_path: str = None, pdf_path: str = None):
         if bool(folder_with_pdfs_path) == bool(pdf_path):
             return
@@ -134,7 +141,7 @@ class Converter:
             pdf_file.close()
 
             if len(pdf_files) > 1:
-                service_symbols = '0123456789.pdf'
+                service_symbols = self.__get_service_symbols()
                 paragraph_title = pdf_filename.strip(service_symbols)
                 paragraph_title = paragraph_title[:25]
             else:
