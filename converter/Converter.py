@@ -1,16 +1,14 @@
 import fitz
 
-from os import listdir, remove, getcwd
+from os import listdir, remove
 from docx import Document
 from docx.shared import Mm
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from PIL import Image, ImageDraw, ImageFont
 
-from os.path import dirname
-
 
 class Converter:
-    def __init__(self, leave_number_in_paragraph_title: bool = False):
+    def __init__(self, leave_number_in_paragraph_title: bool = True):
 
         self.leave_number_in_paragraph_title = leave_number_in_paragraph_title
 
@@ -48,9 +46,9 @@ class Converter:
 
         is_even = self.counter % 2
         if is_even:
-            page_text_pos = [130, text_y]
-        else:
             page_text_pos = [1500, text_y]
+        else:
+            page_text_pos = [130, text_y]
         draw.text(page_text_pos, page, font=self.font, fill=black)
 
         if paragraph_title:
@@ -141,9 +139,10 @@ class Converter:
             pdf_file.close()
 
             if len(pdf_files) > 1:
+                paragraph_title_max_length = 40
                 service_symbols = self.__get_service_symbols()
                 paragraph_title = pdf_filename.strip(service_symbols)
-                paragraph_title = paragraph_title[:25]
+                paragraph_title = paragraph_title[:paragraph_title_max_length]
             else:
                 paragraph_title = None
 
