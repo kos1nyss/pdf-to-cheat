@@ -42,13 +42,14 @@ class Converter:
 
         page = str(self.counter).zfill(3)
 
-        text_y = 2200
+        desired_size = 1654, 2339
+        text_y = image.height * 2200 / desired_size[1]
 
         is_even = self.counter % 2
         if is_even:
-            page_text_pos = [1500, text_y]
+            page_text_pos = [image.width * 1500 / desired_size[0], text_y]
         else:
-            page_text_pos = [130, text_y]
+            page_text_pos = [image.width * 130 / desired_size[0], text_y]
         draw.text(page_text_pos, page, font=self.font, fill=black)
 
         if paragraph_title:
@@ -93,7 +94,7 @@ class Converter:
                 run = table_cell.add_run()
                 image = self.queue_images[image_n]
                 image_width = Mm(95)
-                run.add_picture(image, width=image_width)
+                r = run.add_picture(image, width=image_width)
                 remove(image)
 
             self.document.add_page_break()
@@ -135,7 +136,8 @@ class Converter:
             pdf_file = fitz.open(file_to_convert)
             images = []
             for num, page in enumerate(pdf_file.pages()):
-                images.append(page.get_pixmap(dpi=self.dpi))
+                pixmap = page.get_pixmap(dpi=self.dpi)
+                images.append(pixmap)
             pdf_file.close()
 
             if len(pdf_files) > 1:
